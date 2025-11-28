@@ -1,0 +1,169 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>User Profile | Furni</title>
+
+  <link rel="shortcut icon" href="{% static 'favicon.png' %}">
+  <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link href="{% static 'css/tiny-slider.css' %}" rel="stylesheet">
+  <link href="{% static 'css/style.css' %}" rel="stylesheet">
+
+  <style>
+    body { margin: 0; padding: 0; background: #f8f9fa; }
+    .navbar, .footer-section { background-color: #3b5d50; }
+    .navbar .nav-link, .navbar-brand { color: #fff !important; }
+    .profile-wrapper { padding: 80px 0; }
+    .profile-card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    }
+    .profile-img {
+      width: 150px;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 4px solid #3b5d50;
+    }
+    .btn-info { background: #3b5d50; border: #3b5d50; }
+  </style>
+</head>
+<body>
+
+  <!-- Header/Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark py-3 shadow-sm">
+    <div class="container">
+      <a class="navbar-brand fw-bold fs-4" href="{% url 'index' %}">Furni<span class="text-warning">.</span></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'shop' %}">Shop</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'services' %}">Services</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'blog' %}">Blog</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contact</a></li>
+        </ul>
+        <ul class="navbar-nav d-flex align-items-center gap-3">
+          <li class="nav-item"><a class="nav-link" href="{% url 'wishlist' %}"><i class="fas fa-heart text-danger fs-5"></i></a></li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="userDrop" role="button" data-bs-toggle="dropdown">
+              <img src="{% static 'images/user.svg' %}" width="24" height="24" alt="User">
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+              <li><a class="dropdown-item" href="{% url 'order_details' %}">My Orders</a></li>
+              <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link position-relative" href="{% url 'cart' %}">
+              <img src="{% static 'images/cart.svg' %}" width="24" height="24" alt="Cart">
+              {% if cart_item_count %}
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                  {{ cart_item_count }}
+                </span>
+              {% endif %}
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Profile Section -->
+  <section class="profile-wrapper">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="profile-card">
+
+            <div class="text-center mb-4">
+              {% if uid.image %}
+                <img src="{{ uid.image.url }}" class="profile-img" alt="User Image">
+              {% else %}
+                <img src="{% static 'default_profile.png' %}" class="profile-img" alt="Default User">
+              {% endif %}
+              <h4 class="mt-3">{{ uid.name }}</h4>
+            </div>
+
+            <form method="POST" enctype="multipart/form-data">
+              {% csrf_token %}
+              <div class="mb-3 row">
+                <label class="col-sm-3 col-form-label">Full Name</label>
+                <div class="col-sm-9"><input type="text" name="name" class="form-control" value="{{ uid.name }}"></div>
+              </div>
+              <div class="mb-3 row">
+                <label class="col-sm-3 col-form-label">Email</label>
+                <div class="col-sm-9"><input type="email" name="email" class="form-control" value="{{ uid.email }}"></div>
+              </div>
+              <div class="mb-3 row">
+                <label class="col-sm-3 col-form-label">Phone</label>
+                <div class="col-sm-9"><input type="text" name="phone_number" class="form-control" value="{{ uid.phone_number }}"></div>
+              </div>
+              <div class="mb-3 row">
+                <label class="col-sm-3 col-form-label">Profile Image</label>
+                <div class="col-sm-9"><input type="file" name="image" class="form-control"></div>
+              </div>
+              <div class="text-end">
+                <button type="submit" class="btn btn-info px-4">Save Changes</button>
+              </div>
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer-section text-light py-5">
+    <div class="container">
+      <div class="sofa-img text-center mb-4">
+        <img src="{% static 'images/sofa.png' %}" class="img-fluid" style="max-height: 200px;" alt="Sofa">
+      </div>
+      <div class="row mb-5">
+        <div class="col-lg-4">
+          <h5>Furni.</h5>
+          <p>High-quality furniture & modern interior design.</p>
+          <div class="d-flex gap-3">
+            <a href="#"><i class="fab fa-facebook-f text-light"></i></a>
+            <a href="#"><i class="fab fa-twitter text-light"></i></a>
+            <a href="#"><i class="fab fa-instagram text-light"></i></a>
+            <a href="#"><i class="fab fa-linkedin-in text-light"></i></a>
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <div class="row">
+            <div class="col-6 col-md-3"><ul class="list-unstyled"><li><a href="#" class="text-light">About us</a></li><li><a href="#" class="text-light">Services</a></li><li><a href="#" class="text-light">Blog</a></li><li><a href="#" class="text-light">Contact</a></li></ul></div>
+            <div class="col-6 col-md-3"><ul class="list-unstyled"><li><a href="#" class="text-light">Support</a></li><li><a href="#" class="text-light">Live chat</a></li><li><a href="#" class="text-light">Knowledge base</a></li></ul></div>
+            <div class="col-6 col-md-3"><ul class="list-unstyled"><li><a href="#" class="text-light">Jobs</a></li><li><a href="#" class="text-light">Our Team</a></li><li><a href="#" class="text-light">Privacy Policy</a></li></ul></div>
+            <div class="col-6 col-md-3"><ul class="list-unstyled"><li><a href="#" class="text-light">Nordic Chair</a></li><li><a href="#" class="text-light">Kruzo Aero</a></li><li><a href="#" class="text-light">Ergonomic Chair</a></li></ul></div>
+          </div>
+        </div>
+      </div>
+      <div class="border-top pt-3">
+        <div class="d-md-flex justify-content-between align-items-center">
+          <p class="mb-0">&copy; <script>document.write(new Date().getFullYear());</script> Furni. All Rights Reserved.</p>
+          <div>
+            <a href="#" class="text-light me-3">Terms & Conditions</a>
+            <a href="#" class="text-light">Privacy Policy</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'js/tiny-slider.js' %}"></script>
+  <script src="{% static 'js/custom.js' %}"></script>
+</body>
+</html>

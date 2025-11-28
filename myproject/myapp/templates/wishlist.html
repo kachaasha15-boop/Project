@@ -1,0 +1,272 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Your Wishlist</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="static/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link href="static/css/tiny-slider.css" rel="stylesheet">
+  <link href="static/css/style.css" rel="stylesheet">
+
+  <style>
+    .product-remove a {
+      color: white;
+      background-color: #dc3545;
+      border-radius: 4px;
+      padding: 4px 8px;
+      text-decoration: none;
+    }
+    .product-remove a:hover {
+      background-color: #b02a37;
+    }
+  </style>
+</head>
+<body>
+  <!-- Start Header/Navigation -->
+        <nav class="navbar navbar-expand-lg navbar-dark py-3 shadow-sm" style="background-color: #3b5d50;">
+          <div class="container">
+        
+            <!-- Logo -->
+            <a class="navbar-brand fw-bold fs-4" href="{% url 'index' %}">
+              Furni<span class="text-warning">.</span>
+            </a>
+        
+            <!-- Toggler -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+              aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+        
+            <!-- Navbar links -->
+            <div class="collapse navbar-collapse" id="mainNavbar">
+              <!-- Centered Navigation -->
+              <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'shop' %}">Shop</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'services' %}">Services</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'blog' %}">Blog</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contact</a></li>
+              </ul>
+        
+              <!-- Right Side Icons -->
+              <ul class="navbar-nav d-flex align-items-center gap-3">
+                <li class="nav-item">
+                  <a class="nav-link"  href="{% url 'wishlist' %}" title="Wishlist">
+                    <i class="fas fa-heart text-danger fs-5"></i>
+                  </a>
+                </li>
+        
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    <img src="{% static 'images/user.svg' %}" alt="User" width="24" height="24">
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+                    <li><a class="dropdown-item" href="{% url 'order_details' %}">My Orders</a></li>
+                    <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                  </ul>
+                </li>
+        
+                <li class="nav-item">
+                  <a class="nav-link position-relative" href="{% url 'cart' %}">
+                    <img src="{% static 'images/cart.svg' %}" alt="Cart" width="24" height="24">
+                    {% if cart_item_count %}
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                      {{ cart_item_count }}
+                    </span>
+                    {% endif %}
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+        <!-- End Header/Navigation -->
+
+<!-- Hero Section -->
+<div class="hero">
+  <div class="container">
+    <div class="row justify-content-between">
+      <div class="col-lg-5">
+        <div class="intro-excerpt">
+          <h1>Wishlist</h1>
+          <p class="mb-4">Browse all your favorite products saved here for easy access later.</p>
+          <p>
+            <a href="{% url 'shop' %}" class="btn btn-secondary me-2">Shop Now</a>
+            <a href="#" class="btn btn-white-outline">Explore</a>
+          </p>
+        </div>
+      </div>
+      <div class="col-lg-7">
+        <div class="hero-img-wrap">
+          <img src="{% static 'images/couch.png' %}" class="img-fluid" alt="Couch">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- End Hero Section -->
+
+<!-- Wishlist Section -->
+<div class="untree_co-section before-footer-section py-5">
+  <div class="container">
+    {% if wishlist_items %}
+    <div class="row mb-5">
+      <div class="col-md-12">
+        <div class="site-blocks-table">
+          <table class="table">
+            <thead>
+              <tr>
+                <th class="product-thumbnail">Image</th>
+                <th class="product-name">Product</th>
+                <th class="product-price">Price</th>
+                <th class="product-remove">Remove</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in wishlist_items %}
+              <tr>
+                <td class="product-thumbnail">
+                  <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="img-fluid" style="max-width: 120px;">
+                </td>
+                <td class="product-name">
+                  <h2 class="h5 text-black">{{ item.product.name }}</h2>
+                </td>
+                <td>${{ item.product.price }}</td>
+                <td class="product-remove">
+                  <a href="{% url 'remove_from_wishlist' item.id %}">Remove</a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <a href="{% url 'shop' %}" class="btn btn-outline-black">Continue Shopping</a>
+    {% else %}
+    <div class="text-center">
+      <img src="{% static 'images/empty_wishlist.png' %}" alt="Empty Wishlist" style="max-width: 200px;" class="img-fluid mb-3">
+      <h4>Your wishlist is empty.</h4>
+      <a href="{% url 'shop' %}" class="btn btn-primary mt-3">Browse Products</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Start Footer Section -->
+<footer class="footer-section">
+  <div class="container relative">
+
+    <div class="sofa-img">
+      <img src="static/images/sofa.png" alt="Image" class="img-fluid">
+    </div>
+
+    <div class="row">
+      <div class="col-lg-8">
+        <div class="subscription-form">
+          <h3 class="d-flex align-items-center"><span class="me-1"><img src="static/images/envelope-outline.svg" alt="Image" class="img-fluid"></span><span>Subscribe to Newsletter</span></h3>
+
+              <form action="{% url 'Subscribe' %}" class="row g-3" method="POST">
+								{% csrf_token %}
+								<div class="col-auto">
+									<input type="text" class="form-control" placeholder="Enter your name" name="name" id="name">
+								</div>
+								<div class="col-auto">
+									<input type="email" class="form-control" placeholder="Enter your email" name="email" id="email">
+								</div>
+								<div class="col-auto">
+									<button class="btn btn-primary">
+										<span class="fa fa-paper-plane"></span>
+									</button>
+								</div>
+							</form>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-5 mb-5">
+      <div class="col-lg-4">
+        <div class="mb-4 footer-logo-wrap"><a href="#" class="footer-logo">Furni<span>.</span></a></div>
+        <p class="mb-4">Donec facilisis quam ut purus rutrum lobortis. Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate velit imperdiet dolor tempor tristique. Pellentesque habitant</p>
+
+        <ul class="list-unstyled custom-social">
+          <li><a href="#"><span class="fa fa-brands fa-facebook-f"></span></a></li>
+          <li><a href="#"><span class="fa fa-brands fa-twitter"></span></a></li>
+          <li><a href="#"><span class="fa fa-brands fa-instagram"></span></a></li>
+          <li><a href="#"><span class="fa fa-brands fa-linkedin"></span></a></li>
+        </ul>
+      </div>
+
+      <div class="col-lg-8">
+        <div class="row links-wrap">
+          <div class="col-6 col-sm-6 col-md-3">
+            <ul class="list-unstyled">
+              <li><a href="#">About us</a></li>
+              <li><a href="#">Services</a></li>
+              <li><a href="#">Blog</a></li>
+              <li><a href="#">Contact us</a></li>
+            </ul>
+          </div>
+
+          <div class="col-6 col-sm-6 col-md-3">
+            <ul class="list-unstyled">
+              <li><a href="#">Support</a></li>
+              <li><a href="#">Knowledge base</a></li>
+              <li><a href="#">Live chat</a></li>
+            </ul>
+          </div>
+
+          <div class="col-6 col-sm-6 col-md-3">
+            <ul class="list-unstyled">
+              <li><a href="#">Jobs</a></li>
+              <li><a href="#">Our team</a></li>
+              <li><a href="#">Leadership</a></li>
+              <li><a href="#">Privacy Policy</a></li>
+            </ul>
+          </div>
+
+          <div class="col-6 col-sm-6 col-md-3">
+            <ul class="list-unstyled">
+              <li><a href="#">Nordic Chair</a></li>
+              <li><a href="#">Kruzo Aero</a></li>
+              <li><a href="#">Ergonomic Chair</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="border-top copyright">
+      <div class="row pt-4">
+        <div class="col-lg-6">
+          <p class="mb-2 text-center text-lg-start">Copyright &copy;<script>document.write(new Date().getFullYear());</script>. All Rights Reserved. &mdash; Designed with love by <a href="static/https://untree.co">Untree.co</a> Distributed By <a href="static/https://themewagon.com">ThemeWagon</a></p>
+        </div>
+
+        <div class="col-lg-6 text-center text-lg-end">
+          <ul class="list-unstyled d-inline-flex ms-auto">
+            <li class="me-4"><a href="#">Terms &amp; Conditions</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</footer>
+<!-- End Footer Section -->
+
+<script src="js/bootstrap.bundle.min.js"></script>
+<script src="js/tiny-slider.js"></script>
+<script src="js/custom.js"></script>
+</body>
+</html>
